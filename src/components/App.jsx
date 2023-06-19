@@ -6,14 +6,16 @@ import { nanoid } from 'nanoid';
 
 class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
   };
+
+  constructor() {
+    super();
+    const savedContacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(savedContacts);
+    this.state.contacts = parsedContacts || [];
+  }
 
   //Metoda tworzy kontakt i modyfikuje state dodajac do niego nowy kontakt
   addContact = event => {
@@ -39,7 +41,6 @@ class App extends Component {
     this.setState(prevState => ({
       contacts: [...prevState.contacts, contact],
     }));
-
     event.target.reset();
   };
 
@@ -56,6 +57,10 @@ class App extends Component {
       contacts: prevState.contacts.filter(contact => contact.id !== id),
     }));
   };
+
+  componentDidUpdate() {
+    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+  }
 
   render() {
     const { contacts, filter } = this.state;
